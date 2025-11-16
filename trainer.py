@@ -18,8 +18,8 @@ def estimed_price(mileage, theta0, theta1):
 price, mileage = load_data('data.csv') 
 m = len(mileage)
 
-learning_rate = 0.1
-rounds = 10
+learning_rate = 0.0000000001
+rounds = 10000
 theta0 = 0.0
 theta1 = 0.0
 
