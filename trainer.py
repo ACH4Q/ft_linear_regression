@@ -14,12 +14,14 @@ def load_data(file):
 
 def estimed_price(mileage, theta0, theta1):
     return theta0 + (theta1 * mileage)
+def scaling_values(theta0,theta1):
+        return
 
 price, mileage = load_data('data.csv') 
 m = len(mileage)
 
 learning_rate = 0.0000000001
-rounds = 10000
+rounds = 100
 theta0 = 0.0
 theta1 = 0.0
 
@@ -33,7 +35,8 @@ for i in range(rounds):
 
         prediction = estimed_price(current_mileage, theta0, theta1)
         error = prediction - current_price
-        
+        print(f"prediction  {prediction}")
+        print(f"error  {error}")
         sum_error0 += error
         sum_error1 += error * current_mileage
 
