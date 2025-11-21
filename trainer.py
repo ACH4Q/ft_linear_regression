@@ -1,5 +1,19 @@
 import csv
 
+def scale_values(values):
+    min_val = min(values)
+    max_val = max(values)
+    scaled = [(x - min_val) / (max_val - min_val) for x in values]
+    return scaled, min_val, max_val
+
+def descale_theta(theta, min_price, max_price, min_mileage, max_mileage):
+    range_price = max_price - min_price
+    range_mileage = max_mileage - min_mileage
+    theta0_descaled = theta[0] * range_price + min_price - (theta[1] * min_mileage * range_price) / range_mileage
+    theta1_descaled = (theta[1] * range_price) / range_mileage
+    return theta0_descaled, theta1_descaled
+
+
 def load_data(file):
     price = []
     mileage = []
@@ -14,14 +28,13 @@ def load_data(file):
 
 def estimed_price(mileage, theta0, theta1):
     return theta0 + (theta1 * mileage)
-def scaling_values(theta0,theta1):
-        return
 
-price, mileage = load_data('data.csv') 
-m = len(mileage)
-
-learning_rate = 0.0000000001
-rounds = 100
+price, mileage = load_data('data.csv')
+scaled_mileage, min_mileage, max_mileage = scale_values(mileage)
+scaled_price, min_price, max_price = scale_values(price)
+m = len(scaled_mileage)
+learning_rate = 0.1
+rounds = 1000
 theta0 = 0.0
 theta1 = 0.0
 
@@ -30,13 +43,12 @@ for i in range(rounds):
     sum_error1 = 0
     
     for j in range(m):
-        current_mileage = mileage[j]
-        current_price = price[j]
+        current_mileage = scaled_mileage[j]
+        current_price = scaled_price[j]
 
         prediction = estimed_price(current_mileage, theta0, theta1)
         error = prediction - current_price
-        print(f"prediction  {prediction}")
-        print(f"error  {error}")
+        
         sum_error0 += error
         sum_error1 += error * current_mileage
 
@@ -45,8 +57,8 @@ for i in range(rounds):
 
     theta0 = theta0 - tmp_theta0 
     theta1 = theta1 - tmp_theta1
-
-    print(f"Round {i+1}: theta0 = {theta0:.2f}, theta1 = {theta1:.4f}")
+    
 
 print("\n -- finished training")
-print(f"Final learned values: theta0 = {theta0}, theta1 = {theta1}")
+theta0_final, theta1_final = descale_theta([theta0, theta1], min_price, max_price, min_mileage, max_mileage)
+print(f"Final learned values: theta0 = {theta0_final:.2f}, theta1 = {theta1_final:.4f}")
